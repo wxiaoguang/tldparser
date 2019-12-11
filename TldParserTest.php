@@ -19,9 +19,10 @@ function main()
     $assertEquals(tld_parse_domain('google.com.cn'), ['', 'google', 'com.cn']);
     $assertEquals(tld_parse_domain('a.b.google.jp'), ['a.b', 'google', 'jp']);
 
-    $assertEquals(tld_parse_domain_sld1('xxx'), '');
-    $assertEquals(tld_parse_domain_sld1('b.google.com.cn'), 'b.google.com.cn');
-    $assertEquals(tld_parse_domain_sld1('a.b.google.jp'), 'b.google.jp');
+    $assertEquals(tld_parse_domain_fld_sld('xxx'), ['', '', '']);
+    $assertEquals(tld_parse_domain_fld_sld('b.google.com.cn'), ['google.com.cn', 'b.google.com.cn', '']);
+    $assertEquals(tld_parse_domain_fld_sld('a.b.google.com.cn'), ['google.com.cn', 'b.google.com.cn', 'a.b.google.com.cn']);
+    $assertEquals(tld_parse_domain_fld_sld('x.a.b.google.jp'), ['google.jp', 'b.google.jp', 'a.b.google.jp']);
 
     echo "done";
 }

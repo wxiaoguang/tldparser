@@ -43,3 +43,18 @@ func ParseDomain(dom string) (string, string, string) {
 	}
 	return sub, main, tld
 }
+
+func ParseDomainFldSld(sub, main, tld string) (fld string, sld1 string, sld2 string) {
+	if main != "" {
+		fld = main + "." + tld
+		if sub != "" {
+			p := strings.LastIndex(sub, ".")
+			sld1 = sub[p+1:] + "." + fld
+			if p >= 0 {
+				p = strings.LastIndex(sub[:p], ".")
+				sld2 = sub[p+1:] + "." + fld
+			}
+		}
+	}
+	return
+}

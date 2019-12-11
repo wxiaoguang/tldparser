@@ -1,6 +1,6 @@
 <?php
 
-function tld_parse_domain($s)
+function tld_parse_domain($domain)
 {
     static $tldMapAll = null;
     if(!$tldMapAll) {
@@ -11,9 +11,9 @@ function tld_parse_domain($s)
     $tld = '';
     $tldMap = $tldMapAll['ICANN DOMAINS'];
     $type = null;
-    for ($i = strlen($s) - 1; $i >= -1; $i--) {
-        if ($i == -1 || $s[$i] === '.') {
-            $s2 = substr($s, $i+1);
+    for ($i = strlen($domain) - 1; $i >= -1; $i--) {
+        if ($i == -1 || $domain[$i] === '.') {
+            $s2 = substr($domain, $i+1);
             if (isset($tldMap[$s2]) || $type === 2 /* wildcard */) {
                 $type = $tldMap[$s2] ?? 1;
                 if ($type === 3) {
@@ -21,7 +21,7 @@ function tld_parse_domain($s)
                     break;
                 }
 
-                $s1 = substr($s, 0, max($i, 0));
+                $s1 = substr($domain, 0, max($i, 0));
                 $tld = $s2;
                 $p = strrpos($s1, '.');
                 if($p !== false) {
@@ -40,13 +40,27 @@ function tld_parse_domain($s)
     return [$sub, $main, $tld];
 }
 
-function tld_parse_domain_sld1($s)
+function tld_parse_domain_fld_sld($domain)
 {
-    list($sub, $main, $tld) = tld_parse_domain($s);
-    if ($sub !== '') {
-        $p = strrpos($sub, '.');
-        $s = ($p === false) ? $sub : substr($sub, $p+1);
-        return "$s.$main.$tld";
+    if (is_string($domain)) $domain = tld_parse_domain($domain);
+    list($sub, $main, $tld) = $domain;
+
+    $fld = '';
+    $sld1 = '';
+    $sld2 = '';
+    if ($main !== '') {
+        $fld = "$main.$tld";
+        if ($sub !== '') {
+            $p = strrpos($sub, '.');
+            $s = ($p === false) ? $sub : substr($sub, $p+1);
+            $sld1 = "$s.$main.$tld";
+
+            if ($p !== false) {
+                $p = strrpos(substr($sub, 0, $p), '.');
+                $s = ($p === false) ? $sub : substr($sub, $p+1);
+                $sld2 = "$s.$main.$tld";
+            }
+        }
     }
-    return "";
+    return [$fld, $sld1, $sld2];
 }

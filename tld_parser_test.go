@@ -2,7 +2,7 @@ package tldparser
 
 import "testing"
 
-func run(input, sub, main, tld string, t *testing.T) {
+func testDomain(input, sub, main, tld string, t *testing.T) {
 	s, m, td := ParseDomain(input)
 	if td != tld {
 		t.Errorf("should have TLD '%s', got '%s'", tld, td)
@@ -13,21 +13,42 @@ func run(input, sub, main, tld string, t *testing.T) {
 	}
 }
 
-func Test0(t *testing.T) {
-	run("no_such", "", "", "", t)
-	run(".com", "", "", "com", t)
-	run(".no-such.com", "", "no-such", "com", t)
 
-	run("foo.com", "", "foo", "com", t)
-	run("zip.zop.foo.com", "zip.zop", "foo", "com", t)
-	run("au.com.au", "", "au", "com.au", t)
-	run("im.from.england.co.uk", "im.from", "england", "co.uk", t)
-	run("google.com", "", "google", "com", t)
+func testFldSld(input, fld, sld1, sld2 string, t *testing.T) {
+	f, s1, s2 := ParseDomainFldSld(ParseDomain(input))
+	if f != fld {
+		t.Errorf("should have FLD '%s', got '%s'", fld, f)
+	} else if s1 != sld1 {
+		t.Errorf("should have SLD1 '%s', got '%s'", sld1, s1)
+	} else if s2 != sld2 {
+		t.Errorf("should have SLD2 '%s', got '%s'", sld2, s2)
+	}
+}
 
-	run("a.ck", "", "", "a.ck", t)
-	run("b.a.ck", "", "b", "a.ck", t)
-	run("c.b.a.ck", "c", "b", "a.ck", t)
 
-	run("www.ck", "", "www", "ck", t)
-	run("1.www.ck", "1", "www", "ck", t)
+func TestAll(t *testing.T) {
+	testDomain("no_such", "", "", "", t)
+	testDomain(".com", "", "", "com", t)
+	testDomain(".no-such.com", "", "no-such", "com", t)
+
+	testDomain("foo.com", "", "foo", "com", t)
+	testDomain("zip.zop.foo.com", "zip.zop", "foo", "com", t)
+	testDomain("au.com.au", "", "au", "com.au", t)
+	testDomain("im.from.england.co.uk", "im.from", "england", "co.uk", t)
+	testDomain("google.com", "", "google", "com", t)
+
+	testDomain("a.ck", "", "", "a.ck", t)
+	testDomain("b.a.ck", "", "b", "a.ck", t)
+	testDomain("c.b.a.ck", "c", "b", "a.ck", t)
+
+	testDomain("www.ck", "", "www", "ck", t)
+	testDomain("1.www.ck", "1", "www", "ck", t)
+
+	testFldSld("xxx", "", "", "", t)
+	testFldSld("google.com.cn", "google.com.cn", "", "", t)
+	testFldSld("b.google.com.cn", "google.com.cn", "b.google.com.cn", "", t)
+	testFldSld("a.b.google.com.cn", "google.com.cn", "b.google.com.cn", "a.b.google.com.cn", t)
+
+	testFldSld("b.google.jp", "google.jp", "b.google.jp", "", t)
+	testFldSld("x.a.b.google.jp", "google.jp", "b.google.jp", "a.b.google.jp", t)
 }

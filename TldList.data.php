@@ -1,4 +1,5 @@
 <?php
+// generated on '2019-12-11 09:22:40'
 return [
   'ICANN DOMAINS' => [
     'ac' => 1,

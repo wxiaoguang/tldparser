@@ -60,7 +60,7 @@ return $phpMap;
 
     if (file_exists(__DIR__ . '/tld_parser.go')) {
         echo "generates go code\n";
-        $goMap = str_replace('=>', ':', $phpMap);
+        $goMap = str_replace(' =>', ':', $phpMap);
         $goMap = str_replace("'", '"', $goMap);
         $goMap = trim($goMap, "[] \t\r\n");
         $goMap = str_replace(']', '}', $goMap);
@@ -69,6 +69,21 @@ return $phpMap;
 // @formatter:off
 // generated on '$now'
 var tldMap = map[string]map[string]int {
+$goMap
+}
+");
+    }
+
+    if (file_exists(__DIR__ . '/tldparser/__init__.py')) {
+        echo "generates python code\n";
+        $goMap = str_replace(' =>', ':', $phpMap);
+        $goMap = trim($goMap, "[] \t\r\n");
+        $goMap = str_replace(']', '}', $goMap);
+        $goMap = str_replace('[', '{', $goMap);
+        file_put_contents(__DIR__ . '/tldparser/tldparser_data.py', "
+# @formatter:off
+# generated on '$now'
+_tld_map = {
 $goMap
 }
 ");
