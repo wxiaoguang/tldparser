@@ -1,4 +1,4 @@
-#!/usr/bin/evn php
+#!/usr/bin/env php
 <?php
 function main()
 {
@@ -9,13 +9,13 @@ function main()
     foreach ($lines as $line) {
         $line = trim($line);
 
-        if(!$line) {
+        if (!$line) {
             continue;
         }
 
-        if(substr($line, 0, 2) === '//') {
+        if (substr($line, 0, 2) === '//') {
             $m = null;
-            if(preg_match("/===(\w+) ([\w\s]+)===/", $line, $m)) {
+            if (preg_match("/===(\w+) ([\w\s]+)===/", $line, $m)) {
                 if ($m[1] === 'BEGIN') {
                     $section = $m[2];
                 } else if ($m[1] === 'END') {
@@ -25,14 +25,14 @@ function main()
             continue; // comment
         }
 
-        if(substr($line, 0, 2) === '*.') {
+        if (substr($line, 0, 2) === '*.') {
             // wildcard
             $line = substr($line, 2);
             $tldMap[$section][$line] = 2;
             continue;
         }
 
-        if(substr($line, 0, 1) === '!') {
+        if (substr($line, 0, 1) === '!') {
             // exclude from wildcard
             $line = substr($line, 1);
             $tldMap[$section][$line] = 3;
@@ -76,15 +76,15 @@ $goMap
 
     if (file_exists(__DIR__ . '/tldparser/__init__.py')) {
         echo "generates python code\n";
-        $goMap = str_replace(' =>', ':', $phpMap);
-        $goMap = trim($goMap, "[] \t\r\n");
-        $goMap = str_replace(']', '}', $goMap);
-        $goMap = str_replace('[', '{', $goMap);
+        $pythonDict = str_replace(' =>', ':', $phpMap);
+        $pythonDict = trim($pythonDict, "[] \t\r\n");
+        $pythonDict = str_replace(']', '}', $pythonDict);
+        $pythonDict = str_replace('[', '{', $pythonDict);
         file_put_contents(__DIR__ . '/tldparser/tldparser_data.py', "
 # @formatter:off
 # generated on '$now'
 _tld_map = {
-$goMap
+$pythonDict
 }
 ");
     }
