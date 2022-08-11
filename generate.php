@@ -28,18 +28,21 @@ function main()
         if (substr($line, 0, 2) === '*.') {
             // wildcard
             $line = substr($line, 2);
-            $tldMap[$section][$line] = 2;
+            $domain = idn_to_ascii($line);
+            $tldMap[$section][$domain] = 2;
             continue;
         }
 
         if (substr($line, 0, 1) === '!') {
             // exclude from wildcard
             $line = substr($line, 1);
-            $tldMap[$section][$line] = 3;
+            $domain = idn_to_ascii($line);
+            $tldMap[$section][$domain] = 3;
             continue;
         }
 
-        $tldMap[$section][$line] = 1;
+        $domain = idn_to_ascii($line);
+        $tldMap[$section][$domain] = 1;
     }
 
     foreach ($tldMap as &$map) {
