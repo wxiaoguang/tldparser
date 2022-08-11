@@ -1,5 +1,3 @@
-//go:generate sh generate.sh
-
 package tldparser
 
 import "strings"
@@ -22,6 +20,9 @@ func ParseDomain(dom string) (string, string, string) {
 					mtype = tm[s2]
 				} else {
 					mtype = 1
+				}
+				if mtype == 0 {
+					continue
 				}
 				if mtype == 3 {
 					break

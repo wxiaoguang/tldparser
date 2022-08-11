@@ -15,6 +15,9 @@ function main()
     $assertEquals(tld_parse_domain('www.ck'), ['', 'www', 'ck'], "*.ck excludes www.ck");
     $assertEquals(tld_parse_domain('1.www.ck'), ['1', 'www', 'ck']);
 
+    $assertEquals(tld_parse_domain('test.co.za'), ['', 'test', 'co.za']);
+    $assertEquals(tld_parse_domain('test.nosuch.za'), ['', '', '']);
+
     $assertEquals(tld_parse_domain('no_such'), ['', '', '']);
     $assertEquals(tld_parse_domain('google.com.cn'), ['', 'google', 'com.cn']);
     $assertEquals(tld_parse_domain('a.b.google.jp'), ['a.b', 'google', 'jp']);
@@ -24,7 +27,7 @@ function main()
     $assertEquals(tld_parse_domain_fld_sld('a.b.google.com.cn'), ['google.com.cn', 'b.google.com.cn', 'a.b.google.com.cn']);
     $assertEquals(tld_parse_domain_fld_sld('x.a.b.google.jp'), ['google.jp', 'b.google.jp', 'a.b.google.jp']);
 
-    echo "done";
+    echo "php test done\n";
 }
 
 main();

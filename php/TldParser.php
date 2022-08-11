@@ -16,15 +16,13 @@ function tld_parse_domain($domain)
             $s2 = substr($domain, $i+1);
             if (isset($tldMap[$s2]) || $type === 2 /* wildcard */) {
                 $type = $tldMap[$s2] ?? 1;
-                if ($type === 3) {
-                    // exclude from wildcard
-                    break;
-                }
+                if ($type === 0) continue;
+                if ($type === 3) break; // exclude from wildcard
 
                 $s1 = substr($domain, 0, max($i, 0));
                 $tld = $s2;
                 $p = strrpos($s1, '.');
-                if($p !== false) {
+                if ($p !== false) {
                     $sub = substr($s1, 0, $p);
                     $main = substr($s1, $p+1);
                 } else {

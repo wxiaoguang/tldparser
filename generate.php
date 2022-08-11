@@ -42,6 +42,20 @@ function main()
         $tldMap[$section][$line] = 1;
     }
 
+    foreach ($tldMap as &$map) {
+        foreach ($map as $k => $_) {
+            $fields = explode('.', $k);
+            $parent = '';
+            while (count($fields) > 1) {
+                $s = array_pop($fields);
+                $parent .= $s . ($parent ? '.' : '') . $parent;
+                if (!isset($map[$parent])) {
+                    $map[$parent] = 0;
+                }
+            }
+        }
+    }
+
     $phpMap = var_export($tldMap, true);
     $phpMap = str_replace('array (', '[', $phpMap);
     $phpMap = str_replace(')', ']', $phpMap);
@@ -50,22 +64,23 @@ function main()
 
     $now = date('Y-m-d H:i:s');
 
-    if (file_exists(__DIR__ . '/TldParser.php')) {
+    if (file_exists(__DIR__ . '/php/TldParser.php')) {
         echo "generates php code\n";
-        file_put_contents(__DIR__ . '/TldList.data.php', "<?php
+        file_put_contents(__DIR__ . '/php/TldList.data.php', "<?php
 // generated on '$now'
 return $phpMap;
 ");
     }
 
-    if (file_exists(__DIR__ . '/tld_parser.go')) {
+    if (file_exists(__DIR__ . '/go/tldparser/tld_parser.go')) {
         echo "generates go code\n";
         $goMap = str_replace(' =>', ':', $phpMap);
         $goMap = str_replace("'", '"', $goMap);
-        $goMap = trim($goMap, "[] \t\r\n");
+        $goMap = trim($goMap, "[] \t\n");
         $goMap = str_replace(']', '}', $goMap);
         $goMap = str_replace('[', 'map[string]int {', $goMap);
-        file_put_contents(__DIR__ . '/tld_list_data.go', "package tldparser
+        file_put_contents(__DIR__ . '/go/tldparser/tld_list_data.go', "package tldparser
+
 // @formatter:off
 // generated on '$now'
 var tldMap = map[string]map[string]int {
@@ -74,14 +89,13 @@ $goMap
 ");
     }
 
-    if (file_exists(__DIR__ . '/tldparser/__init__.py')) {
+    if (file_exists(__DIR__ . '/python/tldparser/__init__.py')) {
         echo "generates python code\n";
         $pythonDict = str_replace(' =>', ':', $phpMap);
-        $pythonDict = trim($pythonDict, "[] \t\r\n");
+        $pythonDict = trim($pythonDict, "[] \t\n");
         $pythonDict = str_replace(']', '}', $pythonDict);
         $pythonDict = str_replace('[', '{', $pythonDict);
-        file_put_contents(__DIR__ . '/tldparser/tldparser_data.py', "
-# @formatter:off
+        file_put_contents(__DIR__ . '/python/tldparser/tldparser_data.py', "# @formatter:off
 # generated on '$now'
 _tld_map = {
 $pythonDict

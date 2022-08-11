@@ -1,6 +1,9 @@
 package tldparser
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func testDomain(input, sub, main, tld string, t *testing.T) {
 	s, m, td := ParseDomain(input)
@@ -13,7 +16,6 @@ func testDomain(input, sub, main, tld string, t *testing.T) {
 	}
 }
 
-
 func testFldSld(input, fld, sld1, sld2 string, t *testing.T) {
 	f, s1, s2 := ParseDomainFldSld(ParseDomain(input))
 	if f != fld {
@@ -24,7 +26,6 @@ func testFldSld(input, fld, sld1, sld2 string, t *testing.T) {
 		t.Errorf("should have SLD2 '%s', got '%s'", sld2, s2)
 	}
 }
-
 
 func TestAll(t *testing.T) {
 	testDomain("no_such", "", "", "", t)
@@ -44,6 +45,9 @@ func TestAll(t *testing.T) {
 	testDomain("www.ck", "", "www", "ck", t)
 	testDomain("1.www.ck", "1", "www", "ck", t)
 
+	testDomain("test.co.za", "", "test", "co.za", t)
+	testDomain("test.nosuch.za", "", "", "", t)
+
 	testFldSld("xxx", "", "", "", t)
 	testFldSld("google.com.cn", "google.com.cn", "", "", t)
 	testFldSld("b.google.com.cn", "google.com.cn", "b.google.com.cn", "", t)
@@ -51,4 +55,6 @@ func TestAll(t *testing.T) {
 
 	testFldSld("b.google.jp", "google.jp", "b.google.jp", "", t)
 	testFldSld("x.a.b.google.jp", "google.jp", "b.google.jp", "a.b.google.jp", t)
+
+	fmt.Printf("go test done\n")
 }

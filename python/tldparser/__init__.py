@@ -20,6 +20,8 @@ def tld_parse_domain(domain):
             s2 = domain[i + 1:]
             if s2 in tm or mtype == 2:
                 mtype = tm.get(s2, 1)
+                if mtype == 0:
+                    continue
                 if mtype == 3:
                     break
 
@@ -76,9 +78,12 @@ if __name__ == '__main__':
     _assert_eqauls(tld_parse_domain('google.com.cn'), ('', 'google', 'com.cn'))
     _assert_eqauls(tld_parse_domain('a.b.google.jp'), ('a.b', 'google', 'jp'))
 
+    _assert_eqauls(tld_parse_domain('test.co.za'), ('', 'test', 'co.za'))
+    _assert_eqauls(tld_parse_domain('test.nosuch.za'), ('', '', ''))
+
     _assert_eqauls(tld_parse_domain_fld_sld('xxx'), ('', '', ''))
     _assert_eqauls(tld_parse_domain_fld_sld('b.google.com.cn'), ('google.com.cn', 'b.google.com.cn', ''))
     _assert_eqauls(tld_parse_domain_fld_sld('a.b.google.com.cn'), ('google.com.cn', 'b.google.com.cn', 'a.b.google.com.cn'))
     _assert_eqauls(tld_parse_domain_fld_sld('x.a.b.google.jp'), ('google.jp', 'b.google.jp', 'a.b.google.jp'))
 
-    print("done")
+    print('python test done')
